@@ -122,94 +122,162 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
 var wins = 0;
 var losses = 0;
-function counter() {
-  var SoftPlayersHand = false;
-  var SoftDealersHand = false;
-  function GetRandomCard() {
-    var suit = ["Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
-    var RandomCard = suit(Math.floor(Math.random() * 11) + 1);
-    return RandomCard;
-  }
-  var DealersCard = GetRandomCard();
-  if (DealersCard == "Ace") {
-    DealersCard = 11;
-    SoftDealersHand = true;
-  }
+var Money = 10000;
+function counter(i, Money) {
+  var NumberOfRounds = 100;
+  var _loop = function _loop() {
+    var currentBet = 5;
 
-  //document.getElementById('app').innerHTML = `<p>Hi, your card is ${RandomCard}</p>`;
+    //Make the money thing
 
-  var FirstCard = GetRandomCard();
-  var SecondCard = GetRandomCard();
-  if (FirstCard == "Ace" && SecondCard == "Ace") {
-    FirstCard = 11;
-    SecondCard = 1;
-  }
-  if (FirstCard == "Ace") {
-    SoftPlayersHand = true;
-    if (SecondCard == 10) {
-      FirstCard = 11;
-    } else {
-      FirstCard = 1;
+    var RunningCount = 0;
+    var Decks = 6;
+    var CardsDealt = 52;
+    var deck = ["Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
+    var TrueCount = RunningCount / Decks;
+    var SoftPlayersHand = false;
+    var SoftDealersHand = false;
+    function GetRandomCard() {
+      var RandomSelectedNumber = Math.floor(Math.random() * CardsDealt) + 1;
+      var RandomCard = deck[RandomSelectedNumber];
+      deck.remove[RandomSelectedNumber];
+      CardsDealt += 1;
+      if ([2, 3, 4, 5, 6].includes(RandomCard)) {
+        RunningCount += 1;
+      } else if ([10, "Ace"].includes(RandomCard)) {
+        RunningCount -= 1;
+      }
+      if (CardsDealt <= 0) {
+        Decks -= 1;
+        CardsDealt = 52;
+        console.log("There are ".concat(Decks, " decks left!"));
+        if (Decks <= 0) {
+          i = 101;
+        }
+      }
+      TrueCount = RunningCount / Decks;
+      return RandomCard;
     }
-  }
-  if (SecondCard == "Ace") {
-    SoftPlayersHand = true;
-    if (FirstCard == 10) {
-      SecondCard = 11;
-    } else {
+    var DealersCard = GetRandomCard();
+    if (DealersCard == "Ace") {
+      DealersCard = 11;
+      SoftDealersHand = true;
+    }
+
+    //document.getElementById('app').innerHTML = `<p>Hi, your card is ${RandomCard}</p>`;
+
+    var FirstCard = GetRandomCard();
+    var SecondCard = GetRandomCard();
+    if (FirstCard == "Ace" && SecondCard == "Ace") {
+      FirstCard = 11;
       SecondCard = 1;
     }
-  }
-  var PlayersHand = FirstCard + SecondCard;
-
-  //PLAING OPTIONS
-
-  //Hit
-  function Hit(PlayersHand) {
-    var ThirdCard = GetRandomCard();
-    if (ThirdCard == "Ace") {
-      if (PlayersHand <= 10) {
-        ThirdCard = 11;
+    if (FirstCard == "Ace") {
+      SoftPlayersHand = true;
+      if (SecondCard == 10) {
+        FirstCard = 11;
       } else {
-        ThirdCard = 1;
+        FirstCard = 1;
       }
     }
-    PlayersHand = PlayersHand + ThirdCard;
-    return PlayersHand;
-  }
-
-  //Double Down
-
-  //Stand
-  function Stand(PlayersHand) {
-    //Dealers Turn
-    console.log("still working on it");
-  }
-
-  //PLAYER'S ALGORITHM 
-
-  if (SoftPlayersHand == false) {
-    if (PlayersHand == 11 || PlayersHand == 10 && DealersCard <= 9 || PlayersHand == 9 && 2 < DealersCard < 6) {
-      //Double Down
+    if (SecondCard == "Ace") {
+      SoftPlayersHand = true;
+      if (FirstCard == 10) {
+        SecondCard = 11;
+      } else {
+        SecondCard = 1;
+      }
     }
-    if (17 > PlayersHand > 12 && DealersCard >= 7) {
-      while (17 > PlayersHand) {
+    var PlayersHand = FirstCard + SecondCard;
+
+    //PLAING OPTIONS
+
+    //Hit
+    function Hit(PlayersHand) {
+      var ThirdCard = GetRandomCard();
+      if (ThirdCard == "Ace") {
+        if (PlayersHand <= 10) {
+          ThirdCard = 11;
+        } else {
+          ThirdCard = 1;
+        }
+      }
+      PlayersHand = PlayersHand + ThirdCard;
+      return PlayersHand;
+    }
+
+    //Double Down
+    function DoubleDown(PlayersHand) {}
+
+    //Stand
+    function Stand(PlayersHand) {
+      //Dealers Turn
+      console.log("still working on it");
+    }
+
+    //PLAYER'S ALGORITHM 
+
+    if (SoftPlayersHand == false) {
+      if (PlayersHand == 11 || PlayersHand == 10 && DealersCard <= 9 || PlayersHand == 9 && 2 < DealersCard < 6) {
+        //Double Down
+      } else if (17 > PlayersHand > 12 && DealersCard >= 7) {
+        while (17 > PlayersHand) {
+          Hit(PlayersHand);
+        }
+      } else if (PlayersHand <= 8 || PlayersHand == 9 && (DealersCard == 2 || 7 < DealersCard) || PlayersHand == 10 && DealersCard < 10 || PlayersHand == 12 && (DealersCard == 2 || DealersCard == 3 || 7 <= DealersCard <= 11 || 13 <= PlayersHand <= 16 && 7 <= DealersCard <= 11)) {
         Hit(PlayersHand);
-      }
-    }
-    if (PlayersHand <= 8 || PlayersHand == 9 && (DealersCard == 2 || 7 < DealersCard) || PlayersHand == 10 && DealersCard < 10 || PlayersHand == 12 && (DealersCard == 2 || DealersCard == 3 || 7 <= DealersCard <= 11 || 13 <= PlayersHand <= 16 && 7 <= DealersCard <= 11)) {
-      Hit(PlayersHand);
-      while (17 > PlayersHand >= 10 && (7 < DealersCard || DealersCard == 3 || DealersCard == 2)) {
-        Hit(PlayersHand);
-      }
-      if (PlayersHand < 21) {
+        while (17 > PlayersHand >= 10 && (7 < DealersCard || DealersCard == 3 || DealersCard == 2)) {
+          Hit(PlayersHand);
+        }
+        if (PlayersHand < 21) {
+          Stand(PlayersHand);
+        }
+      } else if (PlayersHand > 17 || 13 <= PlayersHand <= 16 && 2 <= DealersCard <= 6 || PlayersHand == 12 && 4 <= DealersCard <= 6) {
         Stand(PlayersHand);
+      } else {
+        console.log("ERR: Se mamó");
+      }
+    } else if (SoftPlayersHand == true) {
+      if (PlayersHand == 21) {
+        //BlackJack
+        PlayersHand = "BlackJack";
+        Stand(PlayersHand);
+      } else if (18 <= PlayersHand <= 13 && (DealersCard == 5 || DealersCard == 6) || PlayersHand == 19 && DealersCard == 6 || 15 <= PlayersHand <= 18 && DealersCard == 4 || (PlayersHand == 17 || PlayersHand == 18) && DealersCard == 3 || PlayersHand == 18 && DealersCard == 2) {
+        // Double Down
+      } else if (PlayersHand == 19 || PlayersHand == 18 && DealersCard != 6 || PlayersHand == 17 && (DealersCard == 7 || DealersCard == 8)) {
+        //Stand
+        Stand(PlayersHand);
+      } else {
+        //Hit
+        Hit(PlayersHand);
       }
     }
-    if (PlayersHand > 17 || 13 <= PlayersHand <= 16 && 2 <= DealersCard <= 6 || PlayersHand == 12 && 4 <= DealersCard <= 6) {
-      Stand(PlayersHand);
+    if (TrueCount == 0) {
+      currentBet = 5;
     }
-  } else if (SoftPlayersHand == true) {}
+    if (TrueCount == 1) {
+      currentBet = 100;
+    }
+    if (TrueCount == 2) {
+      currentBet = 200;
+    }
+    if (TrueCount == 3) {
+      currentBet = 300;
+    }
+    if (TrueCount == 4) {
+      currentBet = 400;
+    }
+    if (TrueCount == 5) {
+      currentBet = 500;
+    }
+    if (TrueCount > 5) {
+      currentBet = 600;
+    }
+    i++;
+  };
+  while (i < 100) {
+    _loop();
+  }
 }
 counter();
 },{}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
