@@ -117,102 +117,62 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"main.js":[function(require,module,exports) {
-'use strict';
-
-var wins = 0;
-var losses = 0;
-function counter() {
-  var SoftPlayersHand = false;
-  var SoftDealersHand = false;
-  function GetRandomCard() {
-    var suit = ["Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
-    var RandomCard = suit(Math.floor(Math.random() * 11) + 1);
-    return RandomCard;
+})({"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+var bundleURL = null;
+function getBundleURLCached() {
+  if (!bundleURL) {
+    bundleURL = getBundleURL();
   }
-  var DealersCard = GetRandomCard();
-  if (DealersCard == "Ace") {
-    DealersCard = 11;
-    SoftDealersHand = true;
-  }
-
-  //document.getElementById('app').innerHTML = `<p>Hi, your card is ${RandomCard}</p>`;
-
-  var FirstCard = GetRandomCard();
-  var SecondCard = GetRandomCard();
-  if (FirstCard == "Ace" && SecondCard == "Ace") {
-    FirstCard = 11;
-    SecondCard = 1;
-  }
-  if (FirstCard == "Ace") {
-    SoftPlayersHand = true;
-    if (SecondCard == 10) {
-      FirstCard = 11;
-    } else {
-      FirstCard = 1;
-    }
-  }
-  if (SecondCard == "Ace") {
-    SoftPlayersHand = true;
-    if (FirstCard == 10) {
-      SecondCard = 11;
-    } else {
-      SecondCard = 1;
-    }
-  }
-  var PlayersHand = FirstCard + SecondCard;
-
-  //PLAING OPTIONS
-
-  //Hit
-  function Hit(PlayersHand) {
-    var ThirdCard = GetRandomCard();
-    if (ThirdCard == "Ace") {
-      if (PlayersHand <= 10) {
-        ThirdCard = 11;
-      } else {
-        ThirdCard = 1;
-      }
-    }
-    PlayersHand = PlayersHand + ThirdCard;
-    return PlayersHand;
-  }
-
-  //Double Down
-
-  //Stand
-  function Stand(PlayersHand) {
-    //Dealers Turn
-    console.log("still working on it");
-  }
-
-  //PLAYER'S ALGORITHM 
-
-  if (SoftPlayersHand == false) {
-    if (PlayersHand == 11 || PlayersHand == 10 && DealersCard <= 9 || PlayersHand == 9 && 2 < DealersCard < 6) {
-      //Double Down
-    }
-    if (17 > PlayersHand > 12 && DealersCard >= 7) {
-      while (17 > PlayersHand) {
-        Hit(PlayersHand);
-      }
-    }
-    if (PlayersHand <= 8 || PlayersHand == 9 && (DealersCard == 2 || 7 < DealersCard) || PlayersHand == 10 && DealersCard < 10 || PlayersHand == 12 && (DealersCard == 2 || DealersCard == 3 || 7 <= DealersCard <= 11 || 13 <= PlayersHand <= 16 && 7 <= DealersCard <= 11)) {
-      Hit(PlayersHand);
-      while (17 > PlayersHand >= 10 && (7 < DealersCard || DealersCard == 3 || DealersCard == 2)) {
-        Hit(PlayersHand);
-      }
-      if (PlayersHand < 21) {
-        Stand(PlayersHand);
-      }
-    }
-    if (PlayersHand > 17 || 13 <= PlayersHand <= 16 && 2 <= DealersCard <= 6 || PlayersHand == 12 && 4 <= DealersCard <= 6) {
-      Stand(PlayersHand);
-    }
-  } else if (SoftPlayersHand == true) {}
+  return bundleURL;
 }
-counter();
-},{}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+function getBundleURL() {
+  // Attempt to find the URL of the current script and use that as the base URL
+  try {
+    throw new Error();
+  } catch (err) {
+    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
+    if (matches) {
+      return getBaseURL(matches[0]);
+    }
+  }
+  return '/';
+}
+function getBaseURL(url) {
+  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)?\/[^/]+(?:\?.*)?$/, '$1') + '/';
+}
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+},{}],"../node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
+var bundle = require('./bundle-url');
+function updateLink(link) {
+  var newLink = link.cloneNode();
+  newLink.onload = function () {
+    link.remove();
+  };
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+var cssTimeout = null;
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
+      }
+    }
+    cssTimeout = null;
+  }, 50);
+}
+module.exports = reloadCSS;
+},{"./bundle-url":"../node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"style.css":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -237,7 +197,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60119" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61641" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
@@ -381,5 +341,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","main.js"], null)
-//# sourceMappingURL=/main.1f19ae8e.js.map
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js"], null)
+//# sourceMappingURL=/style.e308ff8e.js.map
