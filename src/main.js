@@ -10,7 +10,7 @@ function counter() {
 
   let Money = 10000;
 
-  let NumberOfRounds = 200;
+  let NumberOfRounds = 2000;
 
   let currentBet = 5;
 
@@ -190,7 +190,7 @@ function counter() {
 
     //BlackJack
     function BlackJack(currentBet){
-      Money += (currentBet * 1.5);
+      Money += (currentBet * 2);
       wins += 1;
       return;
     }
@@ -297,22 +297,22 @@ function counter() {
       currentBet = 5;
     }
     else if ((1 < TrueCount) && (TrueCount < 2)){
-      currentBet = 200;
+      currentBet = 300;
     }
     else if (2 < TrueCount && TrueCount < 3){         
-      currentBet = 300; 
+      currentBet = 500; 
     }
     else if (3 < TrueCount && TrueCount < 4){
-      currentBet = 500;
+      currentBet = 1000;
     }
     else if (4 < TrueCount && TrueCount < 5){
-      currentBet = 600;
+      currentBet = 1500;
     }
     else if (5 < TrueCount && TrueCount < 6){
-      currentBet = 700;
+      currentBet = 2000;
     }
     else if (TrueCount > 6){
-      currentBet = 1000;
+      currentBet = 3000;
     }
     //console.log("Running Count: ", RunningCount)
     //console.log("True Count: ", TrueCount);

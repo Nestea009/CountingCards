@@ -126,7 +126,7 @@ function counter() {
   var losses = 0;
   var ties = 0;
   var Money = 10000;
-  var NumberOfRounds = 200;
+  var NumberOfRounds = 2000;
   var currentBet = 5;
   var RunningCount = 0;
   var Decks = 100;
@@ -264,7 +264,7 @@ function counter() {
 
     //BlackJack
     function BlackJack(currentBet) {
-      Money += currentBet * 1.5;
+      Money += currentBet * 2;
       wins += 1;
       return;
     }
@@ -348,17 +348,17 @@ function counter() {
     if (TrueCount < 1) {
       currentBet = 5;
     } else if (1 < TrueCount && TrueCount < 2) {
-      currentBet = 200;
-    } else if (2 < TrueCount && TrueCount < 3) {
       currentBet = 300;
-    } else if (3 < TrueCount && TrueCount < 4) {
+    } else if (2 < TrueCount && TrueCount < 3) {
       currentBet = 500;
-    } else if (4 < TrueCount && TrueCount < 5) {
-      currentBet = 600;
-    } else if (5 < TrueCount && TrueCount < 6) {
-      currentBet = 700;
-    } else if (TrueCount > 6) {
+    } else if (3 < TrueCount && TrueCount < 4) {
       currentBet = 1000;
+    } else if (4 < TrueCount && TrueCount < 5) {
+      currentBet = 1500;
+    } else if (5 < TrueCount && TrueCount < 6) {
+      currentBet = 2000;
+    } else if (TrueCount > 6) {
+      currentBet = 3000;
     }
     //console.log("Running Count: ", RunningCount)
     //console.log("True Count: ", TrueCount);
@@ -400,7 +400,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49919" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53940" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
