@@ -120,27 +120,26 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 })({"main.js":[function(require,module,exports) {
 'use strict';
 
-var wins = 0;
-var losses = 0;
-var Money = 10000;
-function counter(i, Money) {
-  var NumberOfRounds = 100;
+function counter() {
+  var i = 0;
+  var wins = 0;
+  var losses = 0;
+  var ties = 0;
+  var Money = 10000;
+  var NumberOfRounds = 1;
+  var currentBet = 5;
+  var RunningCount = 0;
+  var Decks = 6;
+  var CardsDealt = 52;
+  var deck = ["Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
   var _loop = function _loop() {
-    var currentBet = 5;
-
-    //Make the money thing
-
-    var RunningCount = 0;
-    var Decks = 6;
-    var CardsDealt = 52;
-    var deck = ["Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
     var TrueCount = RunningCount / Decks;
     var SoftPlayersHand = false;
     var SoftDealersHand = false;
     function GetRandomCard() {
       var RandomSelectedNumber = Math.floor(Math.random() * CardsDealt) + 1;
       var RandomCard = deck[RandomSelectedNumber];
-      deck.remove[RandomSelectedNumber];
+      deck.splice(RandomSelectedNumber, 1);
       CardsDealt += 1;
       if ([2, 3, 4, 5, 6].includes(RandomCard)) {
         RunningCount += 1;
@@ -152,7 +151,7 @@ function counter(i, Money) {
         CardsDealt = 52;
         console.log("There are ".concat(Decks, " decks left!"));
         if (Decks <= 0) {
-          i = 101;
+          i = NumberOfRounds + 1;
         }
       }
       TrueCount = RunningCount / Decks;
@@ -207,12 +206,78 @@ function counter(i, Money) {
     }
 
     //Double Down
-    function DoubleDown(PlayersHand) {}
+    function DoubleDown(PlayersHand) {
+      //Draw 1 more card, then stand
+      currentBet = currentBet * 2;
+      Hit(PlayersHand);
+      Stand(PlayersHand);
+    }
 
     //Stand
     function Stand(PlayersHand) {
       //Dealers Turn
-      console.log("still working on it");
+      var SecondDealersCard = GetRandomCard();
+      var DealersHand = DealersCard + SecondDealersCard;
+      if (PlayersHand == "BlackJack") {
+        if (DealersHand == 21) {
+          //Push
+          ties += 1;
+          console.log("Push");
+          return console.log("Push");
+        } else {
+          BlackJack(currentBet, Money);
+          console.log("BlackJack!!!!!!!!");
+          return console.log("BlackJack!!!!!!!!");
+        }
+      }
+      while (DealersHand < 17) {
+        Hit(DealersHand);
+      }
+      if (DealersHand > 21 && SoftDealersHand == false) {
+        PlayerWins(currentBet, Money);
+        console.log("Player Won");
+        return console.log("Player Won");
+      } else if (SoftDealersHand == true) {
+        DealersHand = DealersHand - 10;
+        while (DealersHand < 17) {
+          Hit(DealersHand);
+        }
+        if (DealersHand > 21) {
+          PlayerWins(currentBet, Money);
+          console.log("Player Won");
+          return console.log("Player Won");
+        }
+      }
+      if (PlayersHand == DealersHand) {
+        ties += 1;
+        console.log("Push");
+        return console.log("Push");
+      } else if (PlayersHand > DealersHand) {
+        PlayerWins(currentBet, Money);
+        console.log("Player Wins");
+        return console.log("Player Wins");
+      } else if (PlayersHand < DealersHand) {
+        PlayerLooses(currentBet, Money);
+        console.log("Player lost");
+        return console.log("Player lost");
+      }
+    }
+
+    //BlackJack
+    function BlackJack(currentBet, Money) {
+      Money = Money + currentBet * 1.5;
+    }
+
+    //Win
+    function PlayerWins(currentBet, Money) {
+      Money = Money + currentBet;
+      wins += 1;
+    }
+
+    //Loss
+    function PlayerLooses(currentBet, Money) {
+      Money = Money - currentBet;
+      losses += 1;
     }
 
     //PLAYER'S ALGORITHM 
@@ -220,17 +285,25 @@ function counter(i, Money) {
     if (SoftPlayersHand == false) {
       if (PlayersHand == 11 || PlayersHand == 10 && DealersCard <= 9 || PlayersHand == 9 && 2 < DealersCard < 6) {
         //Double Down
+        DoubleDown(PlayersHand);
       } else if (17 > PlayersHand > 12 && DealersCard >= 7) {
         while (17 > PlayersHand) {
           Hit(PlayersHand);
+        }
+        if (PlayersHand > 21) {
+          PlayerLooses(currentBet, Money);
+        } else {
+          Stand(PlayersHand);
         }
       } else if (PlayersHand <= 8 || PlayersHand == 9 && (DealersCard == 2 || 7 < DealersCard) || PlayersHand == 10 && DealersCard < 10 || PlayersHand == 12 && (DealersCard == 2 || DealersCard == 3 || 7 <= DealersCard <= 11 || 13 <= PlayersHand <= 16 && 7 <= DealersCard <= 11)) {
         Hit(PlayersHand);
         while (17 > PlayersHand >= 10 && (7 < DealersCard || DealersCard == 3 || DealersCard == 2)) {
           Hit(PlayersHand);
         }
-        if (PlayersHand < 21) {
+        if (PlayersHand <= 21) {
           Stand(PlayersHand);
+        } else {
+          PlayerLooses(currentBet, Money);
         }
       } else if (PlayersHand > 17 || 13 <= PlayersHand <= 16 && 2 <= DealersCard <= 6 || PlayersHand == 12 && 4 <= DealersCard <= 6) {
         Stand(PlayersHand);
@@ -244,12 +317,26 @@ function counter(i, Money) {
         Stand(PlayersHand);
       } else if (18 <= PlayersHand <= 13 && (DealersCard == 5 || DealersCard == 6) || PlayersHand == 19 && DealersCard == 6 || 15 <= PlayersHand <= 18 && DealersCard == 4 || (PlayersHand == 17 || PlayersHand == 18) && DealersCard == 3 || PlayersHand == 18 && DealersCard == 2) {
         // Double Down
+        DoubleDown(PlayersHand); //WRONG
       } else if (PlayersHand == 19 || PlayersHand == 18 && DealersCard != 6 || PlayersHand == 17 && (DealersCard == 7 || DealersCard == 8)) {
         //Stand
         Stand(PlayersHand);
       } else {
-        //Hit
-        Hit(PlayersHand);
+        //Hit until we are > 17 and below 21, or if we are above 21, 11 turns into 1 and we keep hitting
+        while (17 <= PlayersHand <= 21) {
+          Hit(PlayersHand);
+        }
+        if (PlayersHand > 21) {
+          PlayersHand = PlayersHand - 10;
+          while (17 > PlayersHand) {
+            Hit(PlayersHand);
+          }
+          if (PlayersHand > 21) {
+            PlayerLooses(currentBet, Money);
+          } else {
+            Stand(PlayersHand);
+          }
+        }
       }
     }
     if (TrueCount == 0) {
@@ -273,11 +360,14 @@ function counter(i, Money) {
     if (TrueCount > 5) {
       currentBet = 600;
     }
-    i++;
+    i += 1;
   };
-  while (i < 100) {
+  while (i < NumberOfRounds) {
     _loop();
   }
+  console.log("Wins: ", wins);
+  console.log("Losses: ", losses);
+  console.log("Ties: ", ties);
 }
 counter();
 },{}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -305,7 +395,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61641" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52827" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
