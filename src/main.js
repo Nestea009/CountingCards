@@ -10,12 +10,12 @@ function counter() {
 
   let Money = 10000;
 
-  let NumberOfRounds = 2000;
+  let NumberOfRounds = 20000000000;
 
   let currentBet = 5;
 
   let RunningCount = 0;
-  let Decks = 100;
+  let Decks = 100000;
 
   let deck = ["Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10];
 
@@ -35,6 +35,8 @@ function counter() {
       let RandomCard = deck[RandomSelectedNumber];
 
       deck.splice(RandomSelectedNumber, 1);
+
+      //console.log(RandomCard);
 
       CardsDealt = deck.length;
 
@@ -78,7 +80,7 @@ function counter() {
 
     if (FirstCard == "Ace"){
       SoftPlayersHand = true; 
-      if (SecondCard == 10){
+      if (SecondCard <= 10){
         FirstCard = 11;
       }
       else {
@@ -88,7 +90,7 @@ function counter() {
 
     if (SecondCard == "Ace"){
       SoftPlayersHand = true; 
-      if (FirstCard == 10){
+      if (FirstCard <= 10){
         SecondCard = 11;
       }
       else {
@@ -105,8 +107,9 @@ function counter() {
       let ThirdCard = GetRandomCard();
 
       if (ThirdCard == "Ace"){
-        if (PlayersHand <= 10){
+        if (PlayersHand <= 10){       //WRONG (MAYBE ACE == 11 NOW, BUT NOT LATER)
           ThirdCard = 11;
+          SoftPlayersHand = true;
         }
         else {
           ThirdCard = 1;
@@ -119,8 +122,6 @@ function counter() {
 
     //Double Down
     function DoubleDown(PlayersHand) {
-      //Draw 1 more card, then stand
-      Money -= currentBet;
       currentBet = currentBet * 2;
       PlayersHand = Hit(PlayersHand);
       Stand(PlayersHand);
@@ -130,7 +131,6 @@ function counter() {
     //Stand
     function Stand(PlayersHand){
 
-      //Dealers Turn
       let SecondDealersCard = GetRandomCard();
 
       if(SecondDealersCard == "Ace"){
@@ -142,6 +142,7 @@ function counter() {
       if (PlayersHand == "BlackJack"){
         if(DealersHand == 21){
           //Push
+          SoftPlayersHand = false;
           ties += 1;
           return;
         }
@@ -172,6 +173,7 @@ function counter() {
       }
 
       if(PlayersHand == DealersHand){
+        SoftPlayersHand = false;
         ties += 1;
         return;
       }
@@ -190,7 +192,8 @@ function counter() {
 
     //BlackJack
     function BlackJack(currentBet){
-      Money += (currentBet * 2);
+      Money += (currentBet * 1.5);
+      SoftPlayersHand = false;
       wins += 1;
       return;
     }
@@ -198,6 +201,7 @@ function counter() {
     //Win
     function PlayerWins(currentBet){
       Money += currentBet;
+      SoftPlayersHand = false;
       wins += 1;
       return;
     }
@@ -231,7 +235,7 @@ function counter() {
       else if ((PlayersHand <= 8) || (PlayersHand == 9 && ((DealersCard == 2) || (7 <= DealersCard))) || (PlayersHand == 10 && DealersCard >= 10) || (PlayersHand == 12 && ((DealersCard == 2) || (DealersCard == 3) || ((7 <= DealersCard) && (DealersCard <= 11))) || (((13 <= PlayersHand) && (PlayersHand <= 16)) && (7 <= DealersCard)))){
         PlayersHand = Hit(PlayersHand);
 
-        while (((17 > PlayersHand) && (PlayersHand >= 10)) && ((7 < DealersCard) || ((DealersCard == 3) || (DealersCard == 2)))){
+        while ((PlayersHand == 11) || (PlayersHand == 9 && ((2 < DealersCard) && (DealersCard < 6))) || (PlayersHand == 10 && DealersCard <= 9) || (PlayersHand <= 8) || (PlayersHand == 9 && ((DealersCard == 2) || (7 <= DealersCard))) || (PlayersHand == 10 && DealersCard >= 10) || (PlayersHand == 12 && ((DealersCard == 2) || (DealersCard == 3) || ((7 <= DealersCard) && (DealersCard <= 11))) || (((13 <= PlayersHand) && (PlayersHand <= 16)) && (7 <= DealersCard)))){
           PlayersHand = Hit(PlayersHand);
         }
 
@@ -246,12 +250,8 @@ function counter() {
       else if ((PlayersHand >= 17) || (((13 <= PlayersHand) && (PlayersHand <= 16)) && ((2 <= DealersCard) && (DealersCard <= 6))) || (PlayersHand == 12 && ((4 <= DealersCard) && (DealersCard <= 6)))){
         Stand(PlayersHand);
       }
-      else {
-        console.log("ERR: Se mamó")
-      }
-
     }
-    else if (SoftPlayersHand == true){
+    if (SoftPlayersHand == true){
 
       if(PlayersHand == 21){
         //BlackJack
@@ -259,7 +259,7 @@ function counter() {
         Stand(PlayersHand);
       }
 
-      else if((((18 <= PlayersHand) && (PlayersHand <= 13)) && ((DealersCard == 5) || (DealersCard == 6))) || (PlayersHand == 19 && DealersCard == 6) || (((15 <= PlayersHand) && (PlayersHand <= 18)) && (DealersCard == 4)) || (((PlayersHand == 17) || (PlayersHand == 18)) && (DealersCard == 3)) || ((PlayersHand == 18) && (DealersCard == 2))){
+      else if((((18 >= PlayersHand) && (PlayersHand >= 13)) && ((DealersCard == 5) || (DealersCard == 6))) || (PlayersHand == 19 && DealersCard == 6) || (((15 <= PlayersHand) && (PlayersHand <= 18)) && (DealersCard == 4)) || (((PlayersHand == 17) || (PlayersHand == 18)) && (DealersCard == 3))){
         // Double Down
         PlayersHand = DoubleDown(PlayersHand);      //WRONG
 
@@ -271,7 +271,7 @@ function counter() {
       }
 
       else {
-        //Hit until we are > 17 and below 21, or if we are above 21, 11 turns into 1 and we keep hitting
+        //Hit
         while(17 >= PlayersHand){
           PlayersHand = Hit(PlayersHand);
         }
@@ -286,6 +286,9 @@ function counter() {
           else {
             Stand(PlayersHand);
           }
+        }
+        else {
+          Stand(PlayersHand);
         }
       }
     }
