@@ -320,12 +320,16 @@ function counter() {
         }
       }
       if (SoftPlayersHand == false){
-        if ((PlayersHand == 11) || ((PlayersHand == 10) && (DealersCard <= 9)) || ((PlayersHand == 9) && ((2 < DealersCard) && (DealersCard < 6)))){
+        if((PlayersHand == 11) || ((PlayersHand == 10) &&  (DealersCard <= 9)) || ((PlayersHand == 9) && ((3 <= DealersCard) && (DealersCard <= 6)))){
           //Double Down
           PlayersHand = DoubleDown(PlayersHand, DealersHand, SoftPlayersHand);
-
         }
-        else if (17 > PlayersHand > 12 && DealersCard >= 7){
+        else if((PlayersHand >= 17) || ((13 <= PlayersHand) && (DealersCard <= 6)) || ((PlayersHand == 12) && ((4 <= DealersCard) && (DealersCard <= 6)))){
+          //Stand
+          Stand(PlayersHand, DealersHand, SoftDealersHand);
+        }
+        else{
+          //Hit
           while (17 > PlayersHand){
             info = Hit(PlayersHand, SoftPlayersHand);
             PlayersHand = info[1];
@@ -338,27 +342,6 @@ function counter() {
             Stand(PlayersHand, DealersHand, SoftDealersHand);
           }
         }
-        else if ((PlayersHand <= 8) || (PlayersHand == 9 && ((DealersCard == 2) || (7 <= DealersCard))) || (PlayersHand == 10 && DealersCard >= 10) || (PlayersHand == 12 && ((DealersCard == 2) || (DealersCard == 3) || ((7 <= DealersCard) && (DealersCard <= 11)))) || (((13 <= PlayersHand) && (PlayersHand <= 16)) && (7 <= DealersCard))){
-          info = Hit(PlayersHand, SoftPlayersHand);
-          PlayersHand = info[1];
-          SoftPlayersHand = info[2];
-
-          while ((PlayersHand == 11) || (PlayersHand == 9 && ((2 < DealersCard) && (DealersCard < 6))) || (PlayersHand == 10 && DealersCard <= 9) || (PlayersHand <= 8) || (PlayersHand == 9 && ((DealersCard == 2) || (7 <= DealersCard))) || (PlayersHand == 10 && DealersCard >= 10) || (PlayersHand == 12 && ((DealersCard == 2) || (DealersCard == 3) || ((7 <= DealersCard) && (DealersCard <= 11))) || (((13 <= PlayersHand) && (PlayersHand <= 16)) && (7 <= DealersCard)))){
-            info = Hit(PlayersHand, SoftPlayersHand);
-            PlayersHand = info[1];
-            SoftPlayersHand = info[2];
-          }
-
-          if (PlayersHand <= 21){
-            Stand(PlayersHand, DealersHand, SoftDealersHand);
-          }
-          else {
-            PlayerLooses(currentBet);
-          }
-        }
-        else if ((PlayersHand >= 17) || (((13 <= PlayersHand) && (PlayersHand <= 16)) && ((2 <= DealersCard) && (DealersCard <= 6))) || (PlayersHand == 12 && ((4 <= DealersCard) && (DealersCard <= 6)))){
-          Stand(PlayersHand, DealersHand, SoftDealersHand);
-        }
       }
       if (SoftPlayersHand == true){
 
@@ -368,13 +351,13 @@ function counter() {
           Stand(PlayersHand, DealersHand, SoftDealersHand);
         }
 
-        else if((((18 >= PlayersHand) && (PlayersHand >= 13)) && ((DealersCard == 5) || (DealersCard == 6))) || (PlayersHand == 19 && DealersCard == 6) || (((15 <= PlayersHand) && (PlayersHand <= 18)) && (DealersCard == 4)) || (((PlayersHand == 17) || (PlayersHand == 18)) && (DealersCard == 3))){
+        else if(((PlayersHand <= 19) && (DealersCard == 6)) || ((PlayersHand <= 18) && (DealersCard == 5)) || (((15 <= PlayersHand) && (PlayersHand <= 18)) && (DealersCard == 4)) || (((PlayersHand == 17) ||(PlayersHand == 18)) && (DealersCard == 3)) || ((PlayersHand == 18) && (DealersCard == 2))){
           // Double Down
           PlayersHand = DoubleDown(PlayersHand, DealersHand, SoftPlayersHand); 
 
         }
 
-        else if((PlayersHand == 19) || ((PlayersHand == 18) && (DealersCard != 6)) || ((PlayersHand == 17) && ((DealersCard == 7) || (DealersCard == 8)))){
+        else if((PlayersHand >= 20) || ((PlayersHand == 19) && (DealersCard != 6)) || ((PlayersHand == 18) && ((DealersCard == 7) || (DealersCard == 8)))){
           //Stand
           Stand(PlayersHand, DealersHand, SoftDealersHand);
         }
