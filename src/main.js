@@ -25,6 +25,11 @@ function counter() {
 
     let Splitting = false;
     let Hands = [];
+    let info = [];
+    
+    let FirstSoft = false;
+    let SecondSoft = false;
+
 
     let TrueCount = RunningCount / Decks;
 
@@ -115,41 +120,52 @@ function counter() {
     //PLAING OPTIONS
 
     //Hit
-    function Hit(PlayersHand) {
+    function Hit(PlayersHand, Soft) {
+
       let ThirdCard = GetRandomCard();
 
       if (ThirdCard == "Ace"){
         if (PlayersHand <= 10){ 
           ThirdCard = 11;
-          SoftPlayersHand = true;
+          Soft = true;
         }
         else {
           ThirdCard = 1;
         }
       }
+
       PlayersHand = PlayersHand + ThirdCard;
 
-      return PlayersHand
+      
+      if((Soft = true) && (PlayersHand > 21)){
+        PlayersHand -= 10;
+        Soft = false;
+      }
+
+      console.log("After hitting: ", PlayersHand)
+
+      return [PlayersHand, Soft];
     }
 
     //Double Down
-    function DoubleDown(PlayersHand) {
+    function DoubleDown(PlayersHand, DealersHand, SoftPlayersHand) {
       currentBet = currentBet * 2;
-      PlayersHand = Hit(PlayersHand);
-      Stand(PlayersHand);
-      return PlayersHand
+
+      info = Hit(PlayersHand, SoftPlayersHand);
+      PlayersHand = info[1];
+      SoftPlayersHand = info[2];
+
+      Stand(PlayersHand, DealersHand);
+      currentBet = currentBet / 2;
+      return PlayersHand;
     }
 
     //Stand
-    function Stand(PlayersHand){
+    function Stand(PlayersHand, DealersHand, SoftDealersHand){
 
-      let SecondDealersCard = GetRandomCard();
-
-      if(SecondDealersCard == "Ace"){
-        SecondDealersCard = 11;
-      }
-
-      let DealersHand = DealersCard + SecondDealersCard;
+      info = Hit(DealersHand, SoftDealersHand);
+      DealersHand = info[1];
+      SoftDealersHand = info[2];
 
       if (PlayersHand == "BlackJack"){
         if(DealersHand == 21){
@@ -165,23 +181,14 @@ function counter() {
       }
 
       while (DealersHand < 17){
-        DealersHand = Hit(DealersHand);
+        info = Hit(DealersHand, SoftDealersHand);
+        DealersHand = info[1];
+        SoftDealersHand = info[2];
       }
 
       if((DealersHand > 21) && (SoftDealersHand == false)){
         PlayerWins(currentBet);
         return;
-      }
-
-      else if((DealersHand > 21) && (SoftDealersHand == true)){
-        DealersHand = DealersHand - 10; 
-        while (DealersHand < 17){
-          DealersHand = Hit(DealersHand);
-        }
-        if(DealersHand > 21){
-          PlayerWins(currentBet);
-          return;
-        }
       }
 
       if(PlayersHand == DealersHand){
@@ -259,7 +266,7 @@ function counter() {
       let PlayersHand1 = FirstCard1 + SecondCard1;
       let PlayersHand2 = FirstCard2 + SecondCard2;
 
-      return [PlayersHand1, PlayersHand2], FirstSoft, SecondSoft;
+      return [[PlayersHand1, PlayersHand2], FirstSoft, SecondSoft];
     }
 
     //BlackJack
@@ -288,15 +295,22 @@ function counter() {
     //Splitting
     if(Splitting == true){   
       if((DoubleAces == true) || (PlayersHand == 16) || ((PlayersHand == 18) && (((2 <= DealersCard) && (DealersCard <= 6)) || ((DealersCard == 8) || (DealersCard == 9)))) || ((PlayersHand == 14) && ((DealersCard >= 2) && (DealersCard <= 7))) || ((PlayersHand == 12) && ((2 <= DealersCard) && (DealersCard <= 6))) || (((PlayersHand == 6) || (PlayersHand == 4)) && ((2 <= DealersCard) && (DealersCard <= 7)))){
-          Hands, FirstSoft, SecondSoft = Split(FirstCard, SecondCard, SoftPlayersHand);
+        let data = Split(FirstCard, SecondCard, SoftPlayersHand);
+        Hands = data[0]
+        FirstSoft = data[1]
+        SecondSoft = data[2]
+      }
+      else{
+        console.log("Don't Split")
       }
     }
-
 
     //PLAYER'S ALGORITHM
     
     for (let l = 0; l < Hands.length; l++) {
       PlayersHand = Hands[l];
+      let DealersHand = DealersCard;
+      console.log(PlayersHand);
       if(Hands.length == 2){
         if(l == 1){
           SoftPlayersHand = FirstSoft;
@@ -308,36 +322,42 @@ function counter() {
       if (SoftPlayersHand == false){
         if ((PlayersHand == 11) || ((PlayersHand == 10) && (DealersCard <= 9)) || ((PlayersHand == 9) && ((2 < DealersCard) && (DealersCard < 6)))){
           //Double Down
-          PlayersHand = DoubleDown(PlayersHand);
+          PlayersHand = DoubleDown(PlayersHand, DealersHand, SoftPlayersHand);
 
         }
         else if (17 > PlayersHand > 12 && DealersCard >= 7){
           while (17 > PlayersHand){
-            PlayersHand = Hit(PlayersHand);
+            info = Hit(PlayersHand, SoftPlayersHand);
+            PlayersHand = info[1];
+            SoftPlayersHand = info[2];
           }
           if(PlayersHand > 21){
             PlayerLooses(currentBet);
           }
           else {
-            Stand(PlayersHand);
+            Stand(PlayersHand, DealersHand, SoftDealersHand);
           }
         }
-        else if ((PlayersHand <= 8) || (PlayersHand == 9 && ((DealersCard == 2) || (7 <= DealersCard))) || (PlayersHand == 10 && DealersCard >= 10) || (PlayersHand == 12 && ((DealersCard == 2) || (DealersCard == 3) || ((7 <= DealersCard) && (DealersCard <= 11))) || (((13 <= PlayersHand) && (PlayersHand <= 16)) && (7 <= DealersCard)))){
-          PlayersHand = Hit(PlayersHand);
+        else if ((PlayersHand <= 8) || (PlayersHand == 9 && ((DealersCard == 2) || (7 <= DealersCard))) || (PlayersHand == 10 && DealersCard >= 10) || (PlayersHand == 12 && ((DealersCard == 2) || (DealersCard == 3) || ((7 <= DealersCard) && (DealersCard <= 11)))) || (((13 <= PlayersHand) && (PlayersHand <= 16)) && (7 <= DealersCard))){
+          info = Hit(PlayersHand, SoftPlayersHand);
+          PlayersHand = info[1];
+          SoftPlayersHand = info[2];
 
           while ((PlayersHand == 11) || (PlayersHand == 9 && ((2 < DealersCard) && (DealersCard < 6))) || (PlayersHand == 10 && DealersCard <= 9) || (PlayersHand <= 8) || (PlayersHand == 9 && ((DealersCard == 2) || (7 <= DealersCard))) || (PlayersHand == 10 && DealersCard >= 10) || (PlayersHand == 12 && ((DealersCard == 2) || (DealersCard == 3) || ((7 <= DealersCard) && (DealersCard <= 11))) || (((13 <= PlayersHand) && (PlayersHand <= 16)) && (7 <= DealersCard)))){
-            PlayersHand = Hit(PlayersHand);
+            info = Hit(PlayersHand, SoftPlayersHand);
+            PlayersHand = info[1];
+            SoftPlayersHand = info[2];
           }
 
           if (PlayersHand <= 21){
-            Stand(PlayersHand);
+            Stand(PlayersHand, DealersHand, SoftDealersHand);
           }
           else {
             PlayerLooses(currentBet);
           }
         }
         else if ((PlayersHand >= 17) || (((13 <= PlayersHand) && (PlayersHand <= 16)) && ((2 <= DealersCard) && (DealersCard <= 6))) || (PlayersHand == 12 && ((4 <= DealersCard) && (DealersCard <= 6)))){
-          Stand(PlayersHand);
+          Stand(PlayersHand, DealersHand, SoftDealersHand);
         }
       }
       if (SoftPlayersHand == true){
@@ -345,39 +365,43 @@ function counter() {
         if(PlayersHand == 21){
           //BlackJack
           PlayersHand = "BlackJack";
-          Stand(PlayersHand);
+          Stand(PlayersHand, DealersHand, SoftDealersHand);
         }
 
         else if((((18 >= PlayersHand) && (PlayersHand >= 13)) && ((DealersCard == 5) || (DealersCard == 6))) || (PlayersHand == 19 && DealersCard == 6) || (((15 <= PlayersHand) && (PlayersHand <= 18)) && (DealersCard == 4)) || (((PlayersHand == 17) || (PlayersHand == 18)) && (DealersCard == 3))){
           // Double Down
-          PlayersHand = DoubleDown(PlayersHand);      //WRONG
+          PlayersHand = DoubleDown(PlayersHand, DealersHand, SoftPlayersHand); 
 
         }
 
         else if((PlayersHand == 19) || ((PlayersHand == 18) && (DealersCard != 6)) || ((PlayersHand == 17) && ((DealersCard == 7) || (DealersCard == 8)))){
           //Stand
-          Stand(PlayersHand);
+          Stand(PlayersHand, DealersHand, SoftDealersHand);
         }
 
         else {
           //Hit
           while(17 >= PlayersHand){
-            PlayersHand = Hit(PlayersHand);
+            info = Hit(PlayersHand, SoftPlayersHand);
+            PlayersHand = info[1];
+            SoftPlayersHand = info[2];
           }
           if(PlayersHand > 21){
             PlayersHand = PlayersHand - 10;
             while(17 > PlayersHand){
-              PlayersHand = Hit(PlayersHand);
+              info = Hit(PlayersHand, SoftPlayersHand);
+              PlayersHand = info[1];
+              SoftPlayersHand = info[2];
             }
             if(PlayersHand > 21){
               PlayerLooses(currentBet);
             }
             else {
-              Stand(PlayersHand);
+              Stand(PlayersHand, DealersHand, SoftDealersHand);
             }
           }
           else {
-            Stand(PlayersHand);
+            Stand(PlayersHand, DealersHand, SoftDealersHand);
           }
         }
       }
