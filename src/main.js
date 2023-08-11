@@ -136,11 +136,12 @@ function counter() {
 
       PlayersHand = PlayersHand + ThirdCard;
 
-      
-      if((Soft = true) && (PlayersHand > 21)){
-        PlayersHand -= 10;
-        Soft = false;
-      }
+      console.log(Soft);
+
+      //if((Soft = true) && (PlayersHand > 21)){
+        //PlayersHand -= 10;
+        //Soft = false;
+      //}
 
       console.log("After hitting: ", PlayersHand)
 
