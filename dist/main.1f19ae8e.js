@@ -126,7 +126,7 @@ function counter() {
   var losses = 0;
   var ties = 0;
   var Money = 10000;
-  var NumberOfRounds = 1;
+  var NumberOfRounds = 1000000;
   var currentBet = 5;
   var RunningCount = 0;
   var Decks = 100000;
@@ -136,17 +136,19 @@ function counter() {
     var Splitting = false;
     var Hands = [];
     var info = [];
-    var FirstSoft = false;
-    var SecondSoft = false;
     var TrueCount = RunningCount / Decks;
     var SoftPlayersHand = false;
     var SoftDealersHand = false;
     var DoubleAces = false;
+    var FirstSoft = false;
+    var SecondSoft = false;
     function GetRandomCard() {
       var RandomSelectedNumber = Math.floor(Math.random() * (CardsDealt - 1)) + 1;
       var RandomCard = deck[RandomSelectedNumber];
       deck.splice(RandomSelectedNumber, 1);
-      console.log(RandomCard);
+
+      //console.log(RandomCard);
+
       CardsDealt = deck.length;
       if ([2, 3, 4, 5, 6].includes(RandomCard)) {
         RunningCount += 1;
@@ -172,8 +174,7 @@ function counter() {
     //document.getElementById('app').innerHTML = `<p>Hi, your card is ${RandomCard}</p>`;
 
     var FirstCard = GetRandomCard();
-    var SecondCard = FirstCard; //FIX LATER!!!!!!!!!!!!!
-    console.log(SecondCard);
+    var SecondCard = GetRandomCard();
     if (FirstCard == SecondCard) {
       Splitting = true;
     }
@@ -210,30 +211,30 @@ function counter() {
       if (ThirdCard == "Ace") {
         if (PlayersHand <= 10) {
           ThirdCard = 11;
-          Soft = true;
+          SoftPlayersHand = true;
         } else {
           ThirdCard = 1;
         }
       }
       PlayersHand = PlayersHand + ThirdCard;
-      console.log(Soft);
+      if ((Soft = true) && PlayersHand > 21) {
+        PlayersHand -= 10;
+        Soft = false;
+      }
 
-      //if((Soft = true) && (PlayersHand > 21)){
-      //PlayersHand -= 10;
-      //Soft = false;
-      //}
+      //console.log("After Hitting: ", PlayersHand);
 
-      console.log("After hitting: ", PlayersHand);
       return [PlayersHand, Soft];
     }
 
     //Double Down
-    function DoubleDown(PlayersHand, DealersHand, SoftPlayersHand) {
+    function DoubleDown(PlayersHand, SoftPlayersHand, DealersHand, SoftDealersHand) {
       currentBet = currentBet * 2;
       info = Hit(PlayersHand, SoftPlayersHand);
-      PlayersHand = info[1];
-      SoftPlayersHand = info[2];
-      Stand(PlayersHand, DealersHand);
+      PlayersHand = info[0];
+      SoftPlayersHand = info[1];
+      info = [];
+      Stand(PlayersHand, DealersHand, SoftDealersHand);
       currentBet = currentBet / 2;
       return PlayersHand;
     }
@@ -241,8 +242,9 @@ function counter() {
     //Stand
     function Stand(PlayersHand, DealersHand, SoftDealersHand) {
       info = Hit(DealersHand, SoftDealersHand);
-      DealersHand = info[1];
-      SoftDealersHand = info[2];
+      DealersHand = info[0];
+      SoftDealersHand = info[1];
+      info = [];
       if (PlayersHand == "BlackJack") {
         if (DealersHand == 21) {
           //Push
@@ -256,12 +258,25 @@ function counter() {
       }
       while (DealersHand < 17) {
         info = Hit(DealersHand, SoftDealersHand);
-        DealersHand = info[1];
-        SoftDealersHand = info[2];
+        DealersHand = info[0];
+        SoftDealersHand = info[1];
+        info = [];
       }
       if (DealersHand > 21 && SoftDealersHand == false) {
         PlayerWins(currentBet);
         return;
+      } else if (DealersHand > 21 && SoftDealersHand == true) {
+        DealersHand = DealersHand - 10;
+        while (DealersHand < 17) {
+          info = Hit(DealersHand, SoftDealersHand);
+          DealersHand = info[0];
+          SoftDealersHand = info[1];
+          info = [];
+        }
+        if (DealersHand > 21) {
+          PlayerWins(currentBet);
+          return;
+        }
       }
       if (PlayersHand == DealersHand) {
         SoftPlayersHand = false;
@@ -347,6 +362,7 @@ function counter() {
     //Loss
     function PlayerLooses(currentBet) {
       Money -= currentBet;
+      SoftPlayersHand = false;
       losses += 1;
       return;
     }
@@ -358,8 +374,6 @@ function counter() {
         Hands = data[0];
         FirstSoft = data[1];
         SecondSoft = data[2];
-      } else {
-        console.log("Don't Split");
       }
     }
 
@@ -368,19 +382,19 @@ function counter() {
     for (var l = 0; l < Hands.length; l++) {
       PlayersHand = Hands[l];
       var DealersHand = DealersCard;
-      console.log(PlayersHand);
+      //console.log(PlayersHand);
       if (Hands.length == 2) {
-        if (l == 1) {
+        if (l == 0) {
           SoftPlayersHand = FirstSoft;
         }
-        if (l == 2) {
+        if (l == 1) {
           SoftPlayersHand = SecondSoft;
         }
       }
       if (SoftPlayersHand == false) {
         if (PlayersHand == 11 || PlayersHand == 10 && DealersCard <= 9 || PlayersHand == 9 && 3 <= DealersCard && DealersCard <= 6) {
           //Double Down
-          PlayersHand = DoubleDown(PlayersHand, DealersHand, SoftPlayersHand);
+          PlayersHand = DoubleDown(PlayersHand, SoftPlayersHand, DealersHand, SoftDealersHand);
         } else if (PlayersHand >= 17 || 13 <= PlayersHand && DealersCard <= 6 || PlayersHand == 12 && 4 <= DealersCard && DealersCard <= 6) {
           //Stand
           Stand(PlayersHand, DealersHand, SoftDealersHand);
@@ -388,8 +402,9 @@ function counter() {
           //Hit
           while (17 > PlayersHand) {
             info = Hit(PlayersHand, SoftPlayersHand);
-            PlayersHand = info[1];
-            SoftPlayersHand = info[2];
+            PlayersHand = info[0];
+            SoftPlayersHand = info[1];
+            info = [];
           }
           if (PlayersHand > 21) {
             PlayerLooses(currentBet);
@@ -405,7 +420,7 @@ function counter() {
           Stand(PlayersHand, DealersHand, SoftDealersHand);
         } else if (PlayersHand <= 19 && DealersCard == 6 || PlayersHand <= 18 && DealersCard == 5 || 15 <= PlayersHand && PlayersHand <= 18 && DealersCard == 4 || (PlayersHand == 17 || PlayersHand == 18) && DealersCard == 3 || PlayersHand == 18 && DealersCard == 2) {
           // Double Down
-          PlayersHand = DoubleDown(PlayersHand, DealersHand, SoftPlayersHand);
+          PlayersHand = DoubleDown(PlayersHand, SoftPlayersHand, DealersHand, SoftDealersHand);
         } else if (PlayersHand >= 20 || PlayersHand == 19 && DealersCard != 6 || PlayersHand == 18 && (DealersCard == 7 || DealersCard == 8)) {
           //Stand
           Stand(PlayersHand, DealersHand, SoftDealersHand);
@@ -413,15 +428,17 @@ function counter() {
           //Hit
           while (17 >= PlayersHand) {
             info = Hit(PlayersHand, SoftPlayersHand);
-            PlayersHand = info[1];
-            SoftPlayersHand = info[2];
+            PlayersHand = info[0];
+            SoftPlayersHand = info[1];
+            info = [];
           }
           if (PlayersHand > 21) {
             PlayersHand = PlayersHand - 10;
             while (17 > PlayersHand) {
               info = Hit(PlayersHand, SoftPlayersHand);
-              PlayersHand = info[1];
-              SoftPlayersHand = info[2];
+              PlayersHand = info[0];
+              SoftPlayersHand = info[1];
+              info = [];
             }
             if (PlayersHand > 21) {
               PlayerLooses(currentBet);
@@ -492,7 +509,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63555" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61045" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
