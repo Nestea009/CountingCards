@@ -8,13 +8,17 @@ function counter() {
 
   let Money = 10000;
 
-  let Games = 10;
+  let Games = 1000;
 
   while(Games > 0){
 
+    if(Money <= 0){
+      break;
+    }
+
     let i = 0;
 
-    let NumberOfRounds = 10000;
+    let NumberOfRounds = 100000;
 
     let currentBet = 5;
 
@@ -65,7 +69,7 @@ function counter() {
           Shoes -= 1;
           Shoe = ["Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10,"Ace",2,3,4,5,6,7,8,9,10,10,10,10];
           CardsRemaining = Shoe.length;
-          console.log(`There are ${Shoes} shoes left!`);
+          //console.log(`There are ${Shoes} shoes left!`);
         }
 
         TrueCount = RunningCount / DecksInShoe;
@@ -79,8 +83,6 @@ function counter() {
         DealersCard = 11;
         SoftDealersHand = true;
       }
-
-      //document.getElementById('app').innerHTML = `<p>Hi, your card is ${RandomCard}</p>`;
       
       let FirstCard = GetRandomCard();
       let SecondCard = GetRandomCard();   
@@ -142,7 +144,7 @@ function counter() {
           Soft = false;
         }
 
-      //console.log("After Hitting: ", PlayersHand);
+        //console.log("After Hitting: ", PlayersHand);
 
         return [PlayersHand, Soft];
       }
@@ -220,9 +222,6 @@ function counter() {
         else if(PlayersHand < DealersHand){
           PlayerLooses(currentBet);
           return;
-        }
-        else {
-          console.log("ERR: se mamó 2")
         }
       }
 
@@ -321,14 +320,11 @@ function counter() {
         }
       }
 
-
-
       //PLAYER'S ALGORITHM
       
       for (let l = 0; l < Hands.length; l++) {
         PlayersHand = Hands[l];
         let DealersHand = DealersCard;
-        //console.log("Players Hand: ", PlayersHand);
         if(Hands.length == 2){
           if(l == 0){
             SoftPlayersHand = FirstSoft;
@@ -418,28 +414,33 @@ function counter() {
         currentBet = 5;
       }
       else if ((1 < TrueCount) && (TrueCount < 2)){
-        currentBet = 300;
+        currentBet = 50;
       }
       else if (2 < TrueCount && TrueCount < 3){         
-        currentBet = 500; 
+        currentBet = 100; 
       }
       else if (3 < TrueCount && TrueCount < 4){
-        currentBet = 1000;
+        currentBet = 150;
       }
       else if (4 < TrueCount && TrueCount < 5){
-        currentBet = 1500;
+        currentBet = 200;
       }
       else if (5 < TrueCount && TrueCount < 6){
-        currentBet = 2000;
+        currentBet = 250;
       }
       else if (TrueCount > 6){
-        currentBet = 3000;
+        currentBet = 300;
       }
       //console.log("Running Count: ", RunningCount)
       //console.log("True Count: ", TrueCount);
-      //console.log(currentBet)
+      //console.log("Current Bet: ", currentBet)
+      //console.log("Cards Remaining: ", CardsRemaining)
       i += 1;
-      //console.log("Round ended")
+      
+      if(Money <= 0){
+        console.log("Lost all money!!!")
+        break;
+      }
     }
     Games -= 1;
   }

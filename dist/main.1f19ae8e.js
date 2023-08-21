@@ -125,10 +125,13 @@ function counter() {
   var losses = 0;
   var ties = 0;
   var Money = 10000;
-  var Games = 10;
+  var Games = 1000;
   var _loop = function _loop() {
+    if (Money <= 0) {
+      return "break";
+    }
     var i = 0;
-    var NumberOfRounds = 10000;
+    var NumberOfRounds = 100000;
     var currentBet = 5;
     var RunningCount = 0;
     var Shoes = 10;
@@ -163,8 +166,9 @@ function counter() {
           Shoes -= 1;
           Shoe = ["Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, "Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10];
           CardsRemaining = Shoe.length;
-          console.log("There are ".concat(Shoes, " shoes left!"));
+          //console.log(`There are ${Shoes} shoes left!`);
         }
+
         TrueCount = RunningCount / DecksInShoe;
         return RandomCard;
       }
@@ -173,9 +177,6 @@ function counter() {
         DealersCard = 11;
         SoftDealersHand = true;
       }
-
-      //document.getElementById('app').innerHTML = `<p>Hi, your card is ${RandomCard}</p>`;
-
       var FirstCard = GetRandomCard();
       var SecondCard = GetRandomCard();
       if (FirstCard == SecondCard) {
@@ -291,8 +292,6 @@ function counter() {
         } else if (PlayersHand < DealersHand) {
           PlayerLooses(currentBet);
           return;
-        } else {
-          console.log("ERR: se mamó 2");
         }
       }
       function Split(FirstCard, SecondCard, SoftPlayersHand) {
@@ -385,7 +384,6 @@ function counter() {
       for (var l = 0; l < Hands.length; l++) {
         PlayersHand = Hands[l];
         var DealersHand = DealersCard;
-        //console.log("Players Hand: ", PlayersHand);
         if (Hands.length == 2) {
           if (l == 0) {
             SoftPlayersHand = FirstSoft;
@@ -460,32 +458,37 @@ function counter() {
       if (TrueCount < 1) {
         currentBet = 5;
       } else if (1 < TrueCount && TrueCount < 2) {
-        currentBet = 300;
+        currentBet = 50;
       } else if (2 < TrueCount && TrueCount < 3) {
-        currentBet = 500;
+        currentBet = 100;
       } else if (3 < TrueCount && TrueCount < 4) {
-        currentBet = 1000;
+        currentBet = 150;
       } else if (4 < TrueCount && TrueCount < 5) {
-        currentBet = 1500;
+        currentBet = 200;
       } else if (5 < TrueCount && TrueCount < 6) {
-        currentBet = 2000;
+        currentBet = 250;
       } else if (TrueCount > 6) {
-        currentBet = 3000;
+        currentBet = 300;
       }
       //console.log("Running Count: ", RunningCount)
       //console.log("True Count: ", TrueCount);
-      //console.log(currentBet)
+      //console.log("Current Bet: ", currentBet)
+      //console.log("Cards Remaining: ", CardsRemaining)
       i += 1;
-      //console.log("Round ended")
+      if (Money <= 0) {
+        console.log("Lost all money!!!");
+        return "break";
+      }
     };
     while (i < NumberOfRounds) {
-      var _ret = _loop2();
-      if (_ret === "break") break;
+      var _ret2 = _loop2();
+      if (_ret2 === "break") break;
     }
     Games -= 1;
   };
   while (Games > 0) {
-    _loop();
+    var _ret = _loop();
+    if (_ret === "break") break;
   }
   console.log("Wins: ", wins);
   console.log("Losses: ", losses);
@@ -518,7 +521,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51315" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63293" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];
